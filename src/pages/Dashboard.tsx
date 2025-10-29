@@ -6,7 +6,6 @@ import {
     LuStar as Star,
     LuTrophy as Trophy,
     LuArrowRight as ArrowRight,
-    LuUser as User,
 } from "react-icons/lu";
 import { Link } from "react-router-dom";
 import logo from "@/assets/roxy-logo.png";
