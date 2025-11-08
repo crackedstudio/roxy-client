@@ -15,8 +15,10 @@
     "@pixi/react": "^8.0.3",
     "@tailwindcss/postcss": "^4.1.16",
     "@tailwindcss/vite": "^4.1.16",
+    "@types/canvas-confetti": "^1.9.0",
     "autoprefixer": "^10.4.21",
     "axios": "^1.13.0",
+    "canvas-confetti": "^1.9.4",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.24",
@@ -29,6 +31,7 @@
     "recharts": "^3.3.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.16",
+    "use-sound": "^5.0.0",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
