@@ -14,6 +14,7 @@ import {
     GameHUD,
     GameSoundManager,
 } from "@/components/game";
+import { AuthGate } from "@/components/auth/AuthGate";
 
 function App() {
     const BackgroundComponent = featureFlags.USE_PIXI_BACKGROUND
@@ -40,31 +41,33 @@ function App() {
                                 <BackgroundComponent />
                                 {featureFlags.USE_GAME_HUD && <GameHUD />}
                                 <GameSoundManager muted />
-                                <div className={contentWrapperClass}>
-                                    <Routes>
-                                        <Route
-                                            path="/"
-                                            element={<Dashboard />}
-                                        />
-                                        <Route
-                                            path="/markets"
-                                            element={<Markets />}
-                                        />
-                                        <Route
-                                            path="/portfolio"
-                                            element={<Portfolio />}
-                                        />
-                                        <Route
-                                            path="/leaderboard"
-                                            element={<Leaderboard />}
-                                        />
-                                        <Route
-                                            path="/guilds"
-                                            element={<Guilds />}
-                                        />
-                                    </Routes>
-                                </div>
-                                <NavigationComponent />
+                                <AuthGate>
+                                    <div className={contentWrapperClass}>
+                                        <Routes>
+                                            <Route
+                                                path="/"
+                                                element={<Dashboard />}
+                                            />
+                                            <Route
+                                                path="/markets"
+                                                element={<Markets />}
+                                            />
+                                            <Route
+                                                path="/portfolio"
+                                                element={<Portfolio />}
+                                            />
+                                            <Route
+                                                path="/leaderboard"
+                                                element={<Leaderboard />}
+                                            />
+                                            <Route
+                                                path="/guilds"
+                                                element={<Guilds />}
+                                            />
+                                        </Routes>
+                                    </div>
+                                    <NavigationComponent />
+                                </AuthGate>
                             </>
                         }
                     />

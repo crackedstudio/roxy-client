@@ -442,7 +442,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
                 ...initialPlayer,
                 displayName,
                 id: `player-${Date.now()}`,
-            },
+                },
         });
     },
 

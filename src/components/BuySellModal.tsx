@@ -62,14 +62,17 @@ export function BuySellModal({ market, onClose }: BuySellModalProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/90 z-9999 flex items-center justify-center p-4"
+                className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto bg-black/90 p-4 sm:p-6"
                 onClick={onClose}
+                role="dialog"
+                aria-modal="true"
             >
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    className="bg-card border-2 border-primary w-full max-w-md p-6"
+                    className="bg-card border-2 border-primary w-[95vw] sm:w-[90vw] md:w-[80vw] lg:w-[70vw] xl:w-[60vw] 2xl:w-[55vw] max-w-4xl overflow-y-auto rounded-none p-5 sm:p-6 md:p-8 lg:p-10 shadow-lg"
+                    style={{ maxHeight: "90vh" }}
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Header */}
@@ -254,7 +257,11 @@ export function BuySellModal({ market, onClose }: BuySellModalProps) {
                                             FEE ({market.feePercent}%)
                                         </span>
                                         <span className="font-brutal text-accent">
-                                            {formatPoints((numDesiredPoints * market.feePercent) / 100)}
+                                            {formatPoints(
+                                                (numDesiredPoints *
+                                                    market.feePercent) /
+                                                    100
+                                            )}
                                         </span>
                                     </div>
                                     <div className="flex justify-between items-center mt-2">
@@ -262,11 +269,18 @@ export function BuySellModal({ market, onClose }: BuySellModalProps) {
                                             LIQUIDITY ADDED TO MARKET
                                         </span>
                                         <span className="font-brutal text-primary">
-                                            {formatPoints(numDesiredPoints - (numDesiredPoints * market.feePercent) / 100)}
+                                            {formatPoints(
+                                                numDesiredPoints -
+                                                    (numDesiredPoints *
+                                                        market.feePercent) /
+                                                        100
+                                            )}
                                         </span>
                                     </div>
                                     <p className="text-xs font-mono-brutal text-white mt-3 p-2 bg-black border">
-                                        Note: Points are burned (no payment received). Fee goes to market creator and platform.
+                                        Note: Points are burned (no payment
+                                        received). Fee goes to market creator
+                                        and platform.
                                     </p>
                                     {!canSell && (
                                         <p className="text-danger text-sm mt-2 font-brutal">
@@ -291,7 +305,8 @@ export function BuySellModal({ market, onClose }: BuySellModalProps) {
                             disabled={
                                 numDesiredPoints <= 0 ||
                                 market.status !== "Active" ||
-                                (isBuying && (!canAfford || !hasEnoughLiquidity)) ||
+                                (isBuying &&
+                                    (!canAfford || !hasEnoughLiquidity)) ||
                                 (!isBuying && !canSell)
                             }
                             className={`flex-1 py-3 px-4 border-brutal font-brutal transition-none ${

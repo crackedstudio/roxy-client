@@ -7,6 +7,7 @@ This branch introduces the first incremental pieces of the new arcade-style UI:
 -   HUD, Sound Manager, badge, and level-up overlay placeholders wired to the Zustand store (no breaking changes).
 -   Arcade navigation prototype powered by `use-sound` with neon button styling.
 -   Zustand store extensions for XP, level, badges, and portfolio updates while keeping the existing API intact.
+-   Dynamic wallet scaffolding (feature-gated) with Linera adapter and signer integration.
 
 ### Feature Flags
 
@@ -23,6 +24,7 @@ Toggle them to preview the new components safely. The layout automatically adjus
 -   The PIXI background is throttled to a lightweight grid until we layer in parallax effects.
 -   Sound manager loads assets lazily and stays muted by default.
 -   Confetti effects are currently disabled (placeholders only) to keep the build lean.
+-   Dynamic wallet connect requires environment variables and will show a modal gate if unset.
 
 ### Next Steps
 
@@ -30,3 +32,7 @@ Toggle them to preview the new components safely. The layout automatically adjus
 -   Add particle/animation layers to the PIXI scene behind the feature flag.
 -   Wire badge and level overlays to store events once the progression flow is scripted.
 -   Integrate real GraphQL data once the service hooks are available.
+-   Configure Dynamic environment IDs and Linera RPC URLs for wallet authentication. See `src/config/dynamicConfig.ts` and set:
+    -   `VITE_DYNAMIC_ENV_ID`
+    -   `VITE_LINERA_RPC_URL`
+    -   `VITE_LINERA_APP_ID` (optional application binding)

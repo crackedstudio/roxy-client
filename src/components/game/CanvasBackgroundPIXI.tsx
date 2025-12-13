@@ -22,7 +22,7 @@ export function CanvasBackgroundPIXI({ className }: CanvasBackgroundPIXIProps) {
 
         const app = new PIXI.Application();
         let destroyed = false;
-
+        
         app.init({
             width: window.innerWidth,
             height: window.innerHeight,
@@ -31,7 +31,7 @@ export function CanvasBackgroundPIXI({ className }: CanvasBackgroundPIXIProps) {
             autoDensity: true,
         }).then(() => {
             if (destroyed || !container) return;
-
+            
             container.appendChild(app.canvas);
             appRef.current = app;
 
@@ -75,7 +75,7 @@ export function CanvasBackgroundPIXI({ className }: CanvasBackgroundPIXIProps) {
             destroyed = true;
             window.removeEventListener("resize", handleResize);
             appRef.current?.destroy(true);
-            appRef.current = null;
+                appRef.current = null;
         };
     }, []);
 

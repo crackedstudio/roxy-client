@@ -181,13 +181,13 @@ export function Guilds() {
                             AVAILABLE GUILDS
                         </h3>
                         {!currentGuild && (
-                            <button
-                                onClick={() => setShowCreateModal(true)}
-                                className="flex items-center gap-2 px-4 py-2 btn-brutal"
-                            >
-                                <Plus size={16} />
-                                CREATE GUILD
-                            </button>
+                        <button
+                            onClick={() => setShowCreateModal(true)}
+                            className="flex items-center gap-2 px-4 py-2 btn-brutal"
+                        >
+                            <Plus size={16} />
+                            CREATE GUILD
+                        </button>
                         )}
                     </div>
 
@@ -196,30 +196,30 @@ export function Guilds() {
                             const isMember = guild.members.includes(player.id);
 
                             return (
-                                <motion.div
-                                    key={guild.id}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                    className="p-4 bg-black border-brutal hover:border-primary transition-none"
-                                >
-                                    <div className="flex items-center justify-between">
+                            <motion.div
+                                key={guild.id}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: index * 0.1 }}
+                                className="p-4 bg-black border-brutal hover:border-primary transition-none"
+                            >
+                                <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3 flex-1">
-                                            <div className="w-10 h-10 bg-primary border-brutal flex items-center justify-center text-lg font-brutal">
-                                                <Users />
-                                            </div>
+                                        <div className="w-10 h-10 bg-primary border-brutal flex items-center justify-center text-lg font-brutal">
+                                            <Users />
+                                        </div>
                                             <div className="flex-1">
-                                                <h4 className="font-brutal text-primary">
-                                                    {guild.name}
-                                                </h4>
-                                                <div className="flex items-center gap-4 mt-1">
-                                                    <span className="text-xs font-mono-brutal text-white">
+                                            <h4 className="font-brutal text-primary">
+                                                {guild.name}
+                                            </h4>
+                                            <div className="flex items-center gap-4 mt-1">
+                                                <span className="text-xs font-mono-brutal text-white">
                                                         {guild.members.length} MEMBERS
                                                     </span>
                                                     <span className="text-xs font-mono-brutal text-white">
                                                         Level {guild.guildLevel}
-                                                    </span>
-                                                    <span className="text-xs font-mono-brutal text-white">
+                                                </span>
+                                                <span className="text-xs font-mono-brutal text-white">
                                                         {formatPoints(
                                                             guild.totalGuildProfit
                                                         )}{" "}
@@ -231,24 +231,24 @@ export function Guilds() {
                                                     <span className="text-xs font-mono-brutal text-accent">
                                                         Shared Pool:{" "}
                                                         {formatPoints(guild.sharedPool)}
-                                                    </span>
-                                                </div>
+                                                </span>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <button
+                                    <button
                                             onClick={() => handleJoinGuild(guild.id)}
                                             disabled={isMember || !!currentGuild}
-                                            className={`px-4 py-2 border-brutal font-brutal transition-none ${
+                                        className={`px-4 py-2 border-brutal font-brutal transition-none ${
                                                 isMember || currentGuild
-                                                    ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                                                    : "btn-brutal"
-                                            }`}
-                                        >
+                                                ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                                                : "btn-brutal"
+                                        }`}
+                                    >
                                             {isMember ? "MEMBER" : "JOIN"}
-                                        </button>
-                                    </div>
-                                </motion.div>
+                                    </button>
+                                </div>
+                            </motion.div>
                             );
                         })}
                     </div>
@@ -256,27 +256,27 @@ export function Guilds() {
 
                 {/* Guild Chat Placeholder */}
                 {currentGuild && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="card-brutal"
-                    >
-                        <div className="flex items-center gap-2 mb-4">
-                            <MessageCircle className="text-primary" size={20} />
-                            <h3 className="text-lg font-brutal text-primary">
-                                GUILD CHAT
-                            </h3>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="card-brutal"
+                >
+                    <div className="flex items-center gap-2 mb-4">
+                        <MessageCircle className="text-primary" size={20} />
+                        <h3 className="text-lg font-brutal text-primary">
+                            GUILD CHAT
+                        </h3>
+                    </div>
+                    <div className="h-32 bg-black border-brutal flex items-center justify-center text-white">
+                        <div className="text-center">
+                            <MessageCircle size={32} className="mx-auto mb-2" />
+                            <p className="font-mono-brutal">
+                                GUILD CHAT COMING SOON
+                            </p>
                         </div>
-                        <div className="h-32 bg-black border-brutal flex items-center justify-center text-white">
-                            <div className="text-center">
-                                <MessageCircle size={32} className="mx-auto mb-2" />
-                                <p className="font-mono-brutal">
-                                    GUILD CHAT COMING SOON
-                                </p>
-                            </div>
-                        </div>
-                    </motion.div>
+                    </div>
+                </motion.div>
                 )}
 
                 {/* Create Guild Modal */}
