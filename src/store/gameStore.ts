@@ -21,6 +21,24 @@ export interface Player {
     lastLogin?: number; // Last login timestamp (for daily reward cooldown)
 }
 
+export interface Asset {
+    symbol: string;
+    name: string;
+    price: number;
+    change24h: number;
+    logo: string;
+    marketCap: number;
+}
+
+export interface Holding {
+    symbol: string;
+    name: string;
+    quantity: number;
+    buyPrice: number;
+    currentPrice: number;
+    logo: string;
+}
+
 // ===== Achievement System =====
 export interface Achievement {
     id: string;
@@ -104,6 +122,12 @@ interface GameState {
     // Player state
     player: Player;
 
+    // Portfolio
+    portfolio: Holding[];
+    portfolioValue: number;
+    totalProfit: number;
+    totalProfitPercent: number;
+
     // Markets
     markets: Market[];
     currentMarketPrice: MarketPrice;
@@ -121,6 +145,13 @@ interface GameState {
 
     // Achievements
     achievements: Achievement[];
+
+    // Meta progression (optional to keep backward compatibility)
+    xp?: number;
+    level?: number;
+    badges?: string[];
+    energy?: number;
+    lastXPEventAt?: number;
 
     // UI state
     isLoading: boolean;
@@ -160,6 +191,12 @@ interface GameActions {
         guild: GuildLeaderboardEntry[]
     ) => void;
     setGuilds: (guilds: Guild[]) => void;
+
+    // Meta progression actions
+    updateXP: (amount: number) => void;
+    levelUp: () => void;
+    addBadge: (badgeId: string) => void;
+    updatePortfolio: (value: number, percent: number) => void;
 
     // UI actions
     setLoading: (loading: boolean) => void;
@@ -375,6 +412,10 @@ function getXPForNextLevel(xp: number): number {
 export const useGameStore = create<GameState & GameActions>((set, get) => ({
     // Initial state
     player: initialPlayer,
+    portfolio: [],
+    portfolioValue: 100000,
+    totalProfit: 0,
+    totalProfitPercent: 0,
     markets: mockMarkets,
     currentMarketPrice: {
         price: 45000, // BTC price in points
@@ -386,6 +427,11 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     globalLeaderboard: mockLeaderboard,
     guildLeaderboard: [],
     achievements: mockAchievements,
+    xp: initialPlayer.experiencePoints,
+    level: initialPlayer.level,
+    badges: [],
+    energy: 100,
+    lastXPEventAt: undefined,
     isLoading: false,
     error: null,
 
@@ -396,7 +442,7 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
                 ...initialPlayer,
                 displayName,
                 id: `player-${Date.now()}`,
-            },
+                },
         });
     },
 
@@ -779,6 +825,82 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
         guild: GuildLeaderboardEntry[]
     ) => set({ globalLeaderboard: global, guildLeaderboard: guild }),
     setGuilds: (guilds: Guild[]) => set({ availableGuilds: guilds }),
+
+    // Meta progression actions (backward compatible stubs)
+    updateXP: (amount: number) => {
+        const now = Date.now();
+        set((state) => {
+            const baselineXP =
+                state.xp ?? state.player.experiencePoints ?? 0;
+            const nextXP = Math.max(0, baselineXP + amount);
+            const playerXP = Math.max(
+                0,
+                state.player.experiencePoints + amount
+            );
+            const computedLevel = calculateLevel(playerXP);
+            return {
+                xp: nextXP,
+                lastXPEventAt: now,
+                player: {
+                    ...state.player,
+                    experiencePoints: playerXP,
+                    level: Math.max(state.player.level, computedLevel),
+                },
+            };
+        });
+    },
+    levelUp: () => {
+        const now = Date.now();
+        set((state) => {
+            const nextLevel =
+                (state.level ?? state.player.level ?? 1) + 1;
+            return {
+                level: nextLevel,
+                lastXPEventAt: now,
+                player: {
+                    ...state.player,
+                    level: state.player.level + 1,
+                },
+            };
+        });
+    },
+    addBadge: (badgeId: string) => {
+        const now = Date.now();
+        set((state) => {
+            const existingBadges = state.badges ?? [];
+            const alreadyHasBadge = existingBadges.includes(badgeId);
+            const updatedBadges = alreadyHasBadge
+                ? existingBadges
+                : [...existingBadges, badgeId];
+
+            const playerHasBadge =
+                state.player.achievementsEarned.includes(badgeId);
+
+            return {
+                badges: updatedBadges,
+                lastXPEventAt: now,
+                player: {
+                    ...state.player,
+                    achievementsEarned: playerHasBadge
+                        ? state.player.achievementsEarned
+                        : [
+                              ...state.player.achievementsEarned,
+                              badgeId,
+                          ],
+                },
+            };
+        });
+    },
+    updatePortfolio: (value: number, percent: number) => {
+        set((state) => ({
+            portfolioValue: value,
+            totalProfit: value - 100000, // baseline assumes starting balance
+            totalProfitPercent:
+                typeof percent === "number"
+                    ? percent
+                    : state.totalProfitPercent,
+        }));
+    },
 
     // UI actions
     setLoading: (loading: boolean) => set({ isLoading: loading }),

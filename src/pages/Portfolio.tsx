@@ -233,7 +233,7 @@ export function Portfolio() {
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: index * 0.1 }}
                                         className="p-4 border bg-card"
-                                    >
+                                        >
                                         <div className="flex items-center justify-between mb-3">
                                                     <div>
                                                         <h4 className="font-brutal text-primary">
@@ -247,18 +247,18 @@ export function Portfolio() {
                                                 <div className="text-right">
                                                 <p className="font-brutal text-lg text-primary">
                                                     {formatPoints(item.position)}
-                                                </p>
+                                                    </p>
                                                 <p className="text-xs font-mono-brutal text-white">
                                                     YOUR POSITION
                                                 </p>
-                                            </div>
+                                                </div>
                                             </div>
 
                                         <div className="grid grid-cols-3 gap-4 text-sm">
                                                 <div>
                                                     <p className="font-mono-brutal text-white">
                                                     MARKET LIQUIDITY
-                                                </p>
+                                                    </p>
                                                 <p className="font-brutal text-white">
                                                     {formatPoints(item.market.totalLiquidity)}
                                                     </p>

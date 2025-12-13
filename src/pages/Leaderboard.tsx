@@ -139,76 +139,76 @@ export function Leaderboard() {
 
                 {/* Global Leaderboard */}
                 {activeTab === "global" && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="card-brutal overflow-hidden"
-                    >
-                        {currentLeaderboard.length > 0 ? (
-                            <div className="divide-y divide-white">
-                                {currentLeaderboard.map((entry, index) => (
-                                    <motion.div
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="card-brutal overflow-hidden"
+                >
+                    {currentLeaderboard.length > 0 ? (
+                        <div className="divide-y divide-white">
+                            {currentLeaderboard.map((entry, index) => (
+                                <motion.div
                                         key={entry.playerId}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: index * 0.1 }}
-                                        className={`p-4 flex items-center gap-4 border ${
-                                            entry.isCurrentUser
-                                                ? "bg-card border-accent border-2"
-                                                : "bg-card border hover:border-primary"
-                                        }`}
-                                    >
-                                        {/* Rank */}
-                                        <div className="shrink-0 w-8 text-center">
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: index * 0.1 }}
+                                    className={`p-4 flex items-center gap-4 border ${
+                                        entry.isCurrentUser
+                                            ? "bg-card border-accent border-2"
+                                            : "bg-card border hover:border-primary"
+                                    }`}
+                                >
+                                    {/* Rank */}
+                                    <div className="shrink-0 w-8 text-center">
                                             {getRankIcon(entry.rank)}
-                                        </div>
+                                    </div>
 
                                         {/* Player Info */}
-                                        <div className="flex items-center gap-3 flex-1">
+                                    <div className="flex items-center gap-3 flex-1">
                                             <div className="w-10 h-10 bg-card border-2 border-primary flex items-center justify-center">
                                                 <span className="font-brutal text-primary">
                                                     {entry.displayName[0].toUpperCase()}
                                                 </span>
                                             </div>
-                                            <div>
-                                                <h3 className="font-brutal flex items-center gap-2">
+                                        <div>
+                                            <h3 className="font-brutal flex items-center gap-2">
                                                     {entry.displayName}
-                                                    {entry.isCurrentUser && (
-                                                        <span className="text-xs bg-accent text-background px-2 py-1 font-brutal">
-                                                            YOU
-                                                        </span>
-                                                    )}
-                                                </h3>
-                                                <p className="text-sm font-mono-brutal">
+                                                {entry.isCurrentUser && (
+                                                    <span className="text-xs bg-accent text-background px-2 py-1 font-brutal">
+                                                        YOU
+                                                    </span>
+                                                )}
+                                            </h3>
+                                            <p className="text-sm font-mono-brutal">
                                                     Level {entry.level} • Win Rate:{" "}
                                                     {formatWinRate(entry.winRate)}
-                                                </p>
-                                            </div>
+                                            </p>
                                         </div>
+                                    </div>
 
                                         {/* Total Earned (as per contract ranking) */}
-                                        <div className="text-right">
+                                    <div className="text-right">
                                             <p className="font-brutal text-lg text-primary">
                                                 {formatPoints(entry.totalProfit)}
-                                            </p>
+                                        </p>
                                             <p className="text-xs font-mono-brutal text-white">
                                                 TOTAL EARNED
                                             </p>
                                             <p className="text-xs font-mono-brutal text-white mt-1">
                                                 (Ranked by total earned)
                                             </p>
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-12 text-white">
-                                <Trophy size={48} className="mx-auto mb-4" />
-                                <h3 className="text-lg font-brutal mb-2 text-primary">
-                                    NO DATA AVAILABLE
-                                </h3>
-                                <p className="font-mono-brutal">
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12 text-white">
+                            <Trophy size={48} className="mx-auto mb-4" />
+                            <h3 className="text-lg font-brutal mb-2 text-primary">
+                                NO DATA AVAILABLE
+                            </h3>
+                            <p className="font-mono-brutal">
                                     LEADERBOARD DATA WILL APPEAR HERE
                                 </p>
                             </div>
@@ -274,10 +274,10 @@ export function Leaderboard() {
                                 </h3>
                                 <p className="font-mono-brutal">
                                     JOIN A GUILD TO SEE THE GUILD LEADERBOARD
-                                </p>
-                            </div>
-                        )}
-                    </motion.div>
+                            </p>
+                        </div>
+                    )}
+                </motion.div>
                 )}
 
                 {/* Stats */}

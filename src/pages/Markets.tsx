@@ -23,7 +23,7 @@ export function Markets() {
         if (sortBy === "active") return market.status === "Active";
         if (sortBy === "newest")
             return market.creationTime > Date.now() - 7 * 24 * 60 * 60 * 1000;
-        return true;
+                return true;
     });
 
     // Check if player can create market (Level 5+ and 10,000+ points)
@@ -69,12 +69,12 @@ export function Markets() {
                 {/* Header */}
                 <div className="mb-6 flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-brutal text-primary mb-2">
+                    <h1 className="text-2xl font-brutal text-primary mb-2">
                             POINT TRADING MARKETS
-                        </h1>
-                        <p className="font-mono-brutal text-white">
+                    </h1>
+                    <p className="font-mono-brutal text-white">
                             BUY AND SELL POINTS WITH OTHER PLAYERS
-                        </p>
+                    </p>
                     </div>
                     {canCreateMarket && (
                         <button
@@ -127,26 +127,26 @@ export function Markets() {
 
                 {/* Market Cards */}
                 {filteredMarkets.length > 0 ? (
-                    <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+                <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
                         {filteredMarkets.map((market, index) => {
                             const liquidityPercent =
                                 (market.totalLiquidity / market.amount) * 100;
                             const playerPosition = market.positions[player.id] || 0;
 
                             return (
-                                <motion.div
+                        <motion.div
                                     key={market.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: index * 0.1 }}
-                                    className={`card-brutal cursor-pointer transition-none ${
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className={`card-brutal cursor-pointer transition-none ${
                                         selectedMarket === market.id
-                                            ? "border-accent border-2"
-                                            : "border hover:border-primary"
-                                    }`}
+                                    ? "border-accent border-2"
+                                    : "border hover:border-primary"
+                            }`}
                                     onClick={() => setSelectedMarket(market.id)}
-                                >
-                                    <div className="flex items-center justify-between mb-4">
+                        >
+                            <div className="flex items-center justify-between mb-4">
                                         <div className="flex-1">
                                             <h3 className="font-brutal text-primary mb-1">
                                                 {market.title}
@@ -195,7 +195,7 @@ export function Markets() {
                                         </div>
 
                                         {/* Liquidity Bar */}
-                                        <div>
+                                    <div>
                                             <div className="flex justify-between items-center mb-1">
                                                 <span className="text-xs font-mono-brutal text-white">
                                                     LIQUIDITY

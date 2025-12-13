@@ -3,28 +3,28 @@
 @theme {
     /* Digital Arcade Brutalism Color Palette */
 
-    /* Primary - Mint Green (#19C27C) */
-    --color-primary: #19c27c;
+    /* Primary - Cyber Green (#00FFC3) */
+    --color-primary: #00ffc3;
     --color-primary-50: oklch(0.98 0.03 180);
     --color-primary-100: oklch(0.95 0.06 180);
     --color-primary-200: oklch(0.9 0.1 180);
     --color-primary-300: oklch(0.8 0.15 180);
     --color-primary-400: oklch(0.7 0.2 180);
-    --color-primary-500: #19c27c;
+    --color-primary-500: #00ffc3;
     --color-primary-600: oklch(0.55 0.18 180);
     --color-primary-700: oklch(0.45 0.15 180);
     --color-primary-800: oklch(0.35 0.12 180);
     --color-primary-900: oklch(0.25 0.08 180);
     --color-primary-950: oklch(0.15 0.05 180);
 
-    /* Accent - Foxy Orange (#F47C2A) */
-    --color-accent: #f47c2a;
+    /* Accent - Magenta/Pink (#FF007A) */
+    --color-accent: #ff007a;
     --color-accent-50: oklch(0.98 0.05 50);
     --color-accent-100: oklch(0.95 0.08 50);
     --color-accent-200: oklch(0.9 0.12 50);
     --color-accent-300: oklch(0.85 0.15 50);
     --color-accent-400: oklch(0.75 0.18 50);
-    --color-accent-500: #f47c2a;
+    --color-accent-500: #ff007a;
     --color-accent-600: oklch(0.6 0.18 50);
     --color-accent-700: oklch(0.5 0.15 50);
     --color-accent-800: oklch(0.4 0.12 50);
@@ -46,15 +46,15 @@
     --color-danger-950: oklch(0.2 0.05 10);
 
     /* Background & Surface Colors */
-    --color-background: #0a0a0a;
+    --color-background: #050505;
     --color-card: #111111;
     --color-border: #333333;
     --color-divider: #333333;
 
     /* Text Colors */
-    --color-text: #ffffff;
-    --color-text-headline: #ffffff;
-    --color-text-body: #d6d6d6;
+    --color-text: #e2e8f0;
+    --color-text-headline: #e2e8f0;
+    --color-text-body: #e2e8f0;
     --color-text-muted: #999999;
 
     /* Utility Colors */
@@ -90,11 +90,11 @@
     --shadow-primary-lg: none;
 
     /* Digital Arcade Brutalism Typography */
-    --font-brutal: "Satoshi", "Clash Display", "Impact", "Arial Black",
+    --font-brutal: "Orbitron", "Satoshi", "Clash Display", "Impact", "Arial Black",
         sans-serif;
     --font-mono-brutal: "JetBrains Mono", "IBM Plex Mono", "Courier New",
         monospace;
-    --font-ui: "Inter", system-ui, sans-serif;
+    --font-ui: "Satoshi", "Inter", system-ui, sans-serif;
 
     /* Brutalist Animations - Sharp, no easing */
     --animate-scroll: scroll 20s linear infinite;
@@ -229,6 +229,32 @@ body {
 
 .border-brutal-divider {
     border: 1px solid var(--color-border);
+}
+
+/* Arcade Neon Borders */
+.border-neon-primary {
+    border: 2px solid var(--color-primary);
+    box-shadow: 0 0 10px var(--color-primary), inset 0 0 10px var(--color-primary);
+}
+
+.border-neon-accent {
+    border: 2px solid var(--color-accent);
+    box-shadow: 0 0 10px var(--color-accent), inset 0 0 10px var(--color-accent);
+}
+
+.border-neon-pulse {
+    animation: neon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes neon-pulse {
+    0%, 100% {
+        box-shadow: 0 0 10px var(--color-primary), inset 0 0 10px var(--color-primary);
+        opacity: 1;
+    }
+    50% {
+        box-shadow: 0 0 20px var(--color-primary), 0 0 30px var(--color-primary), inset 0 0 20px var(--color-primary);
+        opacity: 0.8;
+    }
 }
 
 /* Brutalist backgrounds - Solid, high contrast */
