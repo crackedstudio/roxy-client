@@ -18,26 +18,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import { amountToPoints } from "@/lib/linera/utils/amount";
 
 export function Dashboard() {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:20',message:'Component render started',data:{hookCount:0},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     const { walletAddress, isConnectedToLinera } = useAuth();
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:23',message:'After useAuth hook',data:{hookCount:1,walletAddress:!!walletAddress,isConnectedToLinera},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     const queryClient = useQueryClient();
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:26',message:'After useQueryClient hook',data:{hookCount:2},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
-    
+
     // Fetch player data from Linera
     const { data: lineraPlayer, isLoading: isLoadingPlayer } = usePlayer(
         walletAddress || null
     );
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:32',message:'After usePlayer hook',data:{hookCount:3,isLoadingPlayer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
-    
+
     const {
         player: storePlayer,
         currentMarketPrice,
@@ -45,45 +33,35 @@ export function Dashboard() {
         achievements,
         isLoading,
     } = useGameStore();
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:42',message:'After useGameStore hook',data:{hookCount:4},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
-    
+
     // Use Linera player data if available, otherwise fall back to store (for mock mode)
-    const player = lineraPlayer 
+    const player = lineraPlayer
         ? {
-            id: lineraPlayer.id,
-            displayName: lineraPlayer.displayName || "Player",
-            tokenBalance: amountToPoints(lineraPlayer.tokenBalance),
-            totalEarned: amountToPoints(lineraPlayer.totalEarned),
-            totalSpent: amountToPoints(lineraPlayer.totalSpent),
-            level: lineraPlayer.level,
-            experiencePoints: lineraPlayer.experiencePoints,
-            reputation: lineraPlayer.reputation,
-            marketsParticipated: lineraPlayer.marketsParticipated,
-            marketsWon: lineraPlayer.marketsWon,
-            totalProfit: amountToPoints(lineraPlayer.totalProfit),
-            winStreak: lineraPlayer.winStreak,
-            bestWinStreak: lineraPlayer.bestWinStreak,
-            guildId: lineraPlayer.guildId?.toString() || null,
-            achievementsEarned: [], // TODO: Map from contract if available
-            activeMarkets: [], // TODO: Map from contract if available
-            lastLogin: lineraPlayer.lastLogin ? new Date(lineraPlayer.lastLogin).getTime() : undefined,
-        }
+              id: lineraPlayer.id,
+              displayName: lineraPlayer.displayName || "Player",
+              tokenBalance: amountToPoints(lineraPlayer.tokenBalance),
+              totalEarned: amountToPoints(lineraPlayer.totalEarned),
+              totalSpent: amountToPoints(lineraPlayer.totalSpent),
+              level: lineraPlayer.level,
+              experiencePoints: lineraPlayer.experiencePoints,
+              reputation: lineraPlayer.reputation,
+              marketsParticipated: lineraPlayer.marketsParticipated,
+              marketsWon: lineraPlayer.marketsWon,
+              totalProfit: amountToPoints(lineraPlayer.totalProfit),
+              winStreak: lineraPlayer.winStreak,
+              bestWinStreak: lineraPlayer.bestWinStreak,
+              guildId: lineraPlayer.guildId?.toString() || null,
+              achievementsEarned: [], // TODO: Map from contract if available
+              activeMarkets: [], // TODO: Map from contract if available
+              lastLogin: lineraPlayer.lastLogin
+                  ? new Date(lineraPlayer.lastLogin).getTime()
+                  : undefined,
+          }
         : storePlayer;
 
     const [priceChange, setPriceChange] = useState<number>(0);
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:65',message:'After useState hook 1',data:{hookCount:5},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     const [priceChangePercent, setPriceChangePercent] = useState<number>(0);
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:68',message:'After useState hook 2',data:{hookCount:6},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
     const prevPriceRef = useRef(currentMarketPrice.price);
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:71',message:'After useRef hook',data:{hookCount:7},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
 
     // Calculate total profit
     const totalProfit = player.totalEarned - player.totalSpent;
@@ -93,7 +71,9 @@ export function Dashboard() {
     const levelXPThreshold = 1000 * Math.pow(4, player.level - 1);
     const xpProgress =
         player.level > 1
-            ? ((player.experiencePoints % levelXPThreshold) / levelXPThreshold) * 100
+            ? ((player.experiencePoints % levelXPThreshold) /
+                  levelXPThreshold) *
+              100
             : (player.experiencePoints / 1000) * 100;
 
     // Get recent achievements
@@ -108,28 +88,25 @@ export function Dashboard() {
         const success = await claimDailyReward(walletAddress);
         if (success) {
             // Invalidate player queries to refetch updated data
-            queryClient.invalidateQueries({ queryKey: ["linera", "player", walletAddress] });
-            queryClient.invalidateQueries({ queryKey: ["linera", "player", walletAddress, "totalPoints"] });
+            queryClient.invalidateQueries({
+                queryKey: ["linera", "player", walletAddress],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["linera", "player", walletAddress, "totalPoints"],
+            });
         }
     };
-    
+
     // Check if daily reward can be claimed (24-hour cooldown)
     // Note: This is a simplified check - the contract handles the actual cooldown
     const oneDayMs = 24 * 60 * 60 * 1000;
     const lastLogin = player.lastLogin || 0;
     const timeSinceLastLogin = Date.now() - lastLogin;
-    const canClaimDailyReward = timeSinceLastLogin >= oneDayMs || lastLogin === 0;
-    
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:99',message:'Before early return check',data:{isConnectedToLinera,isLoadingPlayer,willReturnEarly:isConnectedToLinera && isLoadingPlayer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
-    
+    const canClaimDailyReward =
+        timeSinceLastLogin >= oneDayMs || lastLogin === 0;
+
     // Track price changes for live updates
-    // MOVED BEFORE EARLY RETURN TO FIX HOOKS VIOLATION
     useEffect(() => {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:120',message:'useEffect hook called',data:{hookCount:8,currentPrice:currentMarketPrice.price},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-        // #endregion
         const prevPrice = prevPriceRef.current;
         const currentPrice = currentMarketPrice.price;
         const change = currentPrice - prevPrice;
@@ -147,15 +124,9 @@ export function Dashboard() {
 
         return () => clearTimeout(timer);
     }, [currentMarketPrice.price]);
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:137',message:'After useEffect hook declaration, before early return',data:{hookCount:8,isConnectedToLinera,isLoadingPlayer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-    // #endregion
-    
+
     // Show loading state while fetching player data
     if (isConnectedToLinera && isLoadingPlayer) {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:135',message:'Early return executed',data:{isConnectedToLinera,isLoadingPlayer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-        // #endregion
         return (
             <div className="min-h-screen bg-black text-white p-4 flex items-center justify-center">
                 <div className="text-center">
@@ -165,10 +136,6 @@ export function Dashboard() {
             </div>
         );
     }
-
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Dashboard.tsx:147',message:'Normal return path',data:{isConnectedToLinera,isLoadingPlayer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-    // #endregion
 
     return (
         <div className="min-h-screen bg-black text-white p-4 pb-20 lg:pb-4">
@@ -185,7 +152,8 @@ export function Dashboard() {
                             {player.displayName}
                         </h1>
                         <p className="text-sm font-mono-brutal text-text-body">
-                            LEVEL {player.level} • {player.experiencePoints.toLocaleString()} XP
+                            LEVEL {player.level} •{" "}
+                            {player.experiencePoints.toLocaleString()} XP
                         </p>
                     </div>
                 </div>
@@ -220,13 +188,21 @@ export function Dashboard() {
 
                         <div className="flex items-center justify-center lg:justify-start gap-2">
                             {totalProfit >= 0 ? (
-                                <TrendingUp className="text-success" size={20} />
+                                <TrendingUp
+                                    className="text-success"
+                                    size={20}
+                                />
                             ) : (
-                                <TrendingDown className="text-danger" size={20} />
+                                <TrendingDown
+                                    className="text-danger"
+                                    size={20}
+                                />
                             )}
                             <span
                                 className={`text-lg font-brutal ${
-                                    totalProfit >= 0 ? "text-success" : "text-danger"
+                                    totalProfit >= 0
+                                        ? "text-success"
+                                        : "text-danger"
                                 }`}
                             >
                                 {totalProfit >= 0 ? "+" : ""}
@@ -321,7 +297,9 @@ export function Dashboard() {
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.8 }}
                                         className={`flex items-center gap-1 ${
-                                            priceChange > 0 ? "text-success" : "text-danger"
+                                            priceChange > 0
+                                                ? "text-success"
+                                                : "text-danger"
                                         }`}
                                     >
                                         {priceChange > 0 ? (
@@ -338,7 +316,10 @@ export function Dashboard() {
                             </AnimatePresence>
                         </div>
                         <p className="text-sm font-mono-brutal text-white mt-2">
-                            Last updated: {new Date(currentMarketPrice.timestamp).toLocaleTimeString()}
+                            Last updated:{" "}
+                            {new Date(
+                                currentMarketPrice.timestamp
+                            ).toLocaleTimeString()}
                         </p>
                     </div>
                 </motion.div>
@@ -429,8 +410,8 @@ export function Dashboard() {
                         <div className="text-center py-8 text-white">
                             <Star size={32} className="mx-auto mb-2" />
                             <p className="font-mono-brutal text-sm">
-                                NO ACHIEVEMENTS YET. START PLAYING TO EARN YOUR FIRST
-                                ACHIEVEMENT!
+                                NO ACHIEVEMENTS YET. START PLAYING TO EARN YOUR
+                                FIRST ACHIEVEMENT!
                             </p>
                         </div>
                     )}
@@ -479,7 +460,6 @@ export function Dashboard() {
                     </Link>
                 </motion.div>
             </div>
-
         </div>
     );
 }
