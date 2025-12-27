@@ -153,6 +153,24 @@ export function useAuth() {
                 // #endregion
             } catch (error) {
                 console.error("Failed to initialize Linera:", error);
+
+                // Check if it's a cross-origin isolation error
+                const errorMessage =
+                    error instanceof Error ? error.message : String(error);
+                if (
+                    errorMessage.includes("Cross-Origin Isolation") ||
+                    errorMessage.includes("SharedArrayBuffer")
+                ) {
+                    console.error(
+                        "⚠️ Linera WASM requires Cross-Origin Isolation headers.\n" +
+                            "The server must send:\n" +
+                            "- Cross-Origin-Opener-Policy: same-origin\n" +
+                            "- Cross-Origin-Embedder-Policy: credentialless\n\n" +
+                            "For Vercel deployments, ensure vercel.json is configured.\n" +
+                            "For other platforms, configure headers in your hosting settings."
+                    );
+                }
+
                 if (!cancelled) {
                     setIsConnectedToLinera(false);
                     setIsAppConnected(false);

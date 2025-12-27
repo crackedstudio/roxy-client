@@ -7,6 +7,10 @@ import {
 } from "@linera/client";
 import { DynamicSigner } from "./dynamic-signer";
 import { LINERA_RPC_URL } from "../constants";
+import {
+    validateCrossOriginIsolation,
+    getCrossOriginStatus,
+} from "../utils/crossOriginCheck";
 
 export interface QueryResult<T = any> {
     data?: T;
@@ -62,8 +66,26 @@ export class LineraAdapter {
             try {
                 console.log("Initializing Linera WASM...");
                 
+                // Check cross-origin isolation before initializing WASM
+                const crossOriginStatus = getCrossOriginStatus();
+                console.log("Cross-origin isolation status:", crossOriginStatus);
+                
+                if (!crossOriginStatus.isSupported) {
+                    const errorMessage =
+                        crossOriginStatus.errorMessage ||
+                        "Cross-Origin Isolation is not enabled. Please configure your server to send COEP/COOP headers.";
+                    console.error("Cross-origin isolation check failed:", errorMessage);
+                    throw new Error(
+                        `Linera WASM requires Cross-Origin Isolation. ${errorMessage}\n\n` +
+                        `For production deployments, you need to configure your hosting platform to send these headers:\n` +
+                        `- Cross-Origin-Opener-Policy: same-origin\n` +
+                        `- Cross-Origin-Embedder-Policy: credentialless\n\n` +
+                        `See: https://developer.mozilla.org/en-US/docs/Web/API/SharedArrayBuffer#security_requirements`
+                    );
+                }
+                
                 // #region agent log
-                fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'linera-adapter.ts:59',message:'Starting WASM initialization',data:{hasDefault:typeof lineraWeb.default === 'function',lineraWebKeys:Object.keys(lineraWeb).slice(0,10),hasClient:!!(lineraWeb as any).Client},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+                fetch('http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'linera-adapter.ts:59',message:'Starting WASM initialization',data:{hasDefault:typeof lineraWeb.default === 'function',lineraWebKeys:Object.keys(lineraWeb).slice(0,10),hasClient:!!(lineraWeb as any).Client,crossOriginStatus},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
                 // #endregion
                 
                 // The default export is the WASM init function (__wbg_init)
