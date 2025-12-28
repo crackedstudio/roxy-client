@@ -8,6 +8,7 @@ import {
 import { DynamicSigner } from "./dynamic-signer";
 import { LINERA_RPC_URL } from "../constants";
 import { getCrossOriginStatus } from "../utils/crossOriginCheck";
+import { patchWorkerForLineraWasm } from "../utils/workerPatch";
 
 export interface QueryResult<T = any> {
     data?: T;
@@ -62,6 +63,10 @@ export class LineraAdapter {
         LineraAdapter.wasmInitializing = (async () => {
             try {
                 console.log("Initializing Linera WASM...");
+                
+                // Patch Worker constructor to provide document polyfill for workers
+                // This must be done before WASM initialization to catch worker creation
+                patchWorkerForLineraWasm();
                 
                 // Check cross-origin isolation before initializing WASM
                 const crossOriginStatus = getCrossOriginStatus();
