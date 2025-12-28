@@ -9,12 +9,12 @@
 let workerPatched = false;
 
 /**
- * Minimal document polyfill for Web Workers
- * Provides only the properties/methods that Linera WASM might need
+ * Minimal DOM polyfills for Web Workers
+ * Provides document and MutationObserver that Linera WASM might need
  * Must be injected at the very beginning of the worker script
  * Uses direct assignment (not IIFE) to ensure it executes immediately
  */
-const documentPolyfill = `// Document polyfill for Web Workers - must execute before any other code
+const documentPolyfill = `// DOM polyfills for Web Workers - must execute before any other code
 if (typeof document === 'undefined') {
   var document = {
     createElement: function(tagName) {
@@ -84,6 +84,26 @@ if (typeof document === 'undefined') {
   }
   if (typeof globalThis !== 'undefined') {
     globalThis.document = document;
+  }
+}
+
+// MutationObserver polyfill for Web Workers
+if (typeof MutationObserver === 'undefined') {
+  var MutationObserver = function MutationObserver(callback) {
+    if (!(this instanceof MutationObserver)) {
+      return new MutationObserver(callback);
+    }
+    this.callback = callback;
+    this.observe = function() {};
+    this.disconnect = function() {};
+    this.takeRecords = function() { return []; };
+  };
+  // Also set on self and globalThis for compatibility
+  if (typeof self !== 'undefined') {
+    self.MutationObserver = MutationObserver;
+  }
+  if (typeof globalThis !== 'undefined') {
+    globalThis.MutationObserver = MutationObserver;
   }
 }
 `;
