@@ -106,6 +106,116 @@ if (typeof MutationObserver === 'undefined') {
     globalThis.MutationObserver = MutationObserver;
   }
 }
+
+// IndexedDB polyfill for Web Workers
+if (typeof indexedDB === 'undefined') {
+  // Create a minimal IndexedDB polyfill
+  var IDBRequest = function() {
+    this.result = null;
+    this.error = null;
+    this.readyState = 'done';
+    this.onsuccess = null;
+    this.onerror = null;
+  };
+  IDBRequest.prototype.addEventListener = function() {};
+  IDBRequest.prototype.removeEventListener = function() {};
+
+  var IDBOpenDBRequest = function() {
+    IDBRequest.call(this);
+    this.onblocked = null;
+    this.onupgradeneeded = null;
+  };
+  IDBOpenDBRequest.prototype = Object.create(IDBRequest.prototype);
+
+  var IDBTransaction = function() {
+    this.objectStoreNames = [];
+    this.mode = 'readonly';
+    this.onabort = null;
+    this.oncomplete = null;
+    this.onerror = null;
+  };
+  IDBTransaction.prototype.objectStore = function() {
+    return {
+      add: function() { return new IDBRequest(); },
+      put: function() { return new IDBRequest(); },
+      delete: function() { return new IDBRequest(); },
+      get: function() { return new IDBRequest(); },
+      getAll: function() { return new IDBRequest(); },
+      openCursor: function() { return new IDBRequest(); },
+      index: function() {
+        return {
+          get: function() { return new IDBRequest(); },
+          getAll: function() { return new IDBRequest(); },
+          openCursor: function() { return new IDBRequest(); }
+        };
+      }
+    };
+  };
+  IDBTransaction.prototype.abort = function() {};
+
+  var IDBDatabase = function() {
+    this.name = '';
+    this.version = 1;
+    this.objectStoreNames = [];
+    this.onabort = null;
+    this.onclose = null;
+    this.onerror = null;
+    this.onversionchange = null;
+  };
+  IDBDatabase.prototype.createObjectStore = function() {
+    return {
+      createIndex: function() {},
+      deleteIndex: function() {}
+    };
+  };
+  IDBDatabase.prototype.deleteObjectStore = function() {};
+  IDBDatabase.prototype.transaction = function() {
+    return new IDBTransaction();
+  };
+  IDBDatabase.prototype.close = function() {};
+
+  var IDBFactory = function() {};
+  IDBFactory.prototype.open = function() {
+    var request = new IDBOpenDBRequest();
+    // Immediately resolve with a stub database
+    setTimeout(function() {
+      request.result = new IDBDatabase();
+      if (request.onsuccess) {
+        request.onsuccess({ target: request });
+      }
+    }, 0);
+    return request;
+  };
+  IDBFactory.prototype.deleteDatabase = function() {
+    return new IDBOpenDBRequest();
+  };
+  IDBFactory.prototype.databases = function() {
+    return Promise.resolve([]);
+  };
+  IDBFactory.prototype.cmp = function() {
+    return 0;
+  };
+
+  var indexedDB = new IDBFactory();
+  
+  // Also set on self and globalThis for compatibility
+  if (typeof self !== 'undefined') {
+    self.indexedDB = indexedDB;
+    self.IDBRequest = IDBRequest;
+    self.IDBOpenDBRequest = IDBOpenDBRequest;
+    self.IDBTransaction = IDBTransaction;
+    self.IDBDatabase = IDBDatabase;
+    self.IDBFactory = IDBFactory;
+  }
+  if (typeof globalThis !== 'undefined') {
+    globalThis.indexedDB = indexedDB;
+    globalThis.IDBRequest = IDBRequest;
+    globalThis.IDBOpenDBRequest = IDBOpenDBRequest;
+    globalThis.IDBTransaction = IDBTransaction;
+    globalThis.IDBDatabase = IDBDatabase;
+    globalThis.IDBFactory = IDBFactory;
+  }
+}
 `;
 
 /**
