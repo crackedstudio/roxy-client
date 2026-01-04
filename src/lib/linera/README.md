@@ -79,3 +79,4 @@ VITE_DYNAMIC_LIVE_ENVIRONMENT_ID=your_live_id
 
 - `WalletConnect` - UI component for wallet connection (in `src/components/wallet/`)
 
+

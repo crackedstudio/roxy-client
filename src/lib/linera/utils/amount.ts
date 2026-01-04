@@ -43,3 +43,4 @@ export function formatAmount(amount: number | string): string {
     return points.toLocaleString();
 }
 
+

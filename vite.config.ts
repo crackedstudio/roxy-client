@@ -33,6 +33,11 @@ export default defineConfig({
         },
         force: false,
     },
+    esbuild: {
+        supported: {
+            "top-level-await": true,
+        },
+    },
     build: {
         target: "esnext",
     },
@@ -41,9 +46,8 @@ export default defineConfig({
             "Cross-Origin-Opener-Policy": "same-origin",
             // COEP is required for SharedArrayBuffer (needed by Linera WASM)
             // Try credentialless first (less strict than require-corp)
-            // If Dynamic Labs still has issues, we may need to contact them
-            // to add Cross-Origin-Resource-Policy headers to their resources
             "Cross-Origin-Embedder-Policy": "credentialless",
+            "Cross-Origin-Resource-Policy": "cross-origin",
         },
         hmr: {
             protocol: "wss", // Use WSS for HTTPS

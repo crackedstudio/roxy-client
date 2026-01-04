@@ -3,7 +3,6 @@ export * from "./constants";
 
 // Export adapter
 export { lineraAdapter, LineraAdapter } from "./lib/linera-adapter";
-export type { QueryResult } from "./lib/linera-adapter";
 
 // Export service
 export { LineraService } from "./services/LineraService";

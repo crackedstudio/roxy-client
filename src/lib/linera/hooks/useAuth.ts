@@ -42,58 +42,11 @@ export function useAuth() {
 
             // Skip if we've already attempted initialization for this wallet
             if (initAttemptedRef.current === currentWalletAddress) {
-                // #region agent log
-                fetch(
-                    "http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be",
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            location: "useAuth.ts:44",
-                            message:
-                                "Skipping initialization - already attempted for this wallet",
-                            data: {
-                                walletAddress: currentWalletAddress,
-                                attemptedFor: initAttemptedRef.current,
-                            },
-                            timestamp: Date.now(),
-                            sessionId: "debug-session",
-                            runId: "run1",
-                            hypothesisId: "A",
-                        }),
-                    }
-                ).catch(() => {});
-                // #endregion
                 return;
             }
 
             // Mark that we're attempting initialization for this wallet
             initAttemptedRef.current = currentWalletAddress;
-
-            // #region agent log
-            fetch(
-                "http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        location: "useAuth.ts:20",
-                        message:
-                            "useEffect triggered - starting initialization",
-                        data: {
-                            hasPrimaryWallet: !!primaryWallet,
-                            isAuthenticated: !!user,
-                            walletAddress: primaryWallet?.address,
-                            alreadyConnected: lineraAdapter.isChainConnected(),
-                        },
-                        timestamp: Date.now(),
-                        sessionId: "debug-session",
-                        runId: "run1",
-                        hypothesisId: "A",
-                    }),
-                }
-            ).catch(() => {});
-            // #endregion
 
             setIsLoading(true);
             try {
@@ -102,55 +55,11 @@ export function useAuth() {
 
                 // Check if effect was cancelled before updating state
                 if (cancelled) {
-                    // #region agent log
-                    fetch(
-                        "http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be",
-                        {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                location: "useAuth.ts:32",
-                                message:
-                                    "Effect cancelled - skipping state update",
-                                data: {},
-                                timestamp: Date.now(),
-                                sessionId: "debug-session",
-                                runId: "run1",
-                                hypothesisId: "B",
-                            }),
-                        }
-                    ).catch(() => {});
-                    // #endregion
                     return;
                 }
 
                 setIsConnectedToLinera(lineraAdapter.isChainConnected());
                 setIsAppConnected(lineraAdapter.isApplicationSet());
-
-                // #region agent log
-                fetch(
-                    "http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be",
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            location: "useAuth.ts:40",
-                            message:
-                                "Initialization successful - state updated",
-                            data: {
-                                isConnectedToLinera:
-                                    lineraAdapter.isChainConnected(),
-                                isAppConnected:
-                                    lineraAdapter.isApplicationSet(),
-                            },
-                            timestamp: Date.now(),
-                            sessionId: "debug-session",
-                            runId: "run1",
-                            hypothesisId: "A",
-                        }),
-                    }
-                ).catch(() => {});
-                // #endregion
             } catch (error) {
                 console.error("Failed to initialize Linera:", error);
 
@@ -200,24 +109,6 @@ export function useAuth() {
 
         // Cleanup function to mark effect as cancelled
         return () => {
-            // #region agent log
-            fetch(
-                "http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        location: "useAuth.ts:58",
-                        message: "useEffect cleanup - marking as cancelled",
-                        data: {},
-                        timestamp: Date.now(),
-                        sessionId: "debug-session",
-                        runId: "run1",
-                        hypothesisId: "B",
-                    }),
-                }
-            ).catch(() => {});
-            // #endregion
             cancelled = true;
         };
         // Use primaryWallet and user directly instead of isAuthenticated to avoid dependency issues

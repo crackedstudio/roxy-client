@@ -1,5 +1,5 @@
 import { lineraAdapter } from "../lib/linera-adapter";
-import { PREDICTIVE_MANAGER_APP_ID, PREVIOUS_APP_IDS } from "../constants";
+import { PREDICTIVE_MANAGER_APP_ID } from "../constants";
 import type {
     Player,
     PriceOutcome,
@@ -52,137 +52,31 @@ export class LineraService {
      * Initialize the service with a Dynamic wallet
      */
     async initialize(dynamicWallet: any): Promise<void> {
-        // #region agent log
-        fetch(
-            "http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be",
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    location: "LineraService.ts:56",
-                    message: "initialize() called",
-                    data: {
-                        isInitialized: this.isInitialized,
-                        hasInitPromise: !!this.initializePromise,
-                        walletAddress: dynamicWallet?.address,
-                    },
-                    timestamp: Date.now(),
-                    sessionId: "debug-session",
-                    runId: "run1",
-                    hypothesisId: "C",
-                }),
-            }
-        ).catch(() => {});
-        // #endregion
-
         if (this.isInitialized) {
-            // #region agent log
-            fetch(
-                "http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        location: "LineraService.ts:61",
-                        message: "Already initialized - early return",
-                        data: {
-                            isInitialized: this.isInitialized,
-                            chainId: this.chainId,
-                        },
-                        timestamp: Date.now(),
-                        sessionId: "debug-session",
-                        runId: "run1",
-                        hypothesisId: "C",
-                    }),
-                }
-            ).catch(() => {});
-            // #endregion
             console.log("LineraService already initialized");
             return;
         }
 
         // If already initializing, return the existing promise
         if (this.initializePromise) {
-            // #region agent log
-            fetch(
-                "http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be",
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        location: "LineraService.ts:68",
-                        message:
-                            "Initialization already in progress - returning existing promise",
-                        data: { hasInitPromise: !!this.initializePromise },
-                        timestamp: Date.now(),
-                        sessionId: "debug-session",
-                        runId: "run1",
-                        hypothesisId: "C",
-                    }),
-                }
-            ).catch(() => {});
-            // #endregion
             return this.initializePromise;
         }
 
         // Create the initialization promise
         this.initializePromise = (async () => {
             try {
-                // #region agent log
-                fetch(
-                    "http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be",
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            location: "LineraService.ts:76",
-                            message: "Starting initialization",
-                            data: { walletAddress: dynamicWallet?.address },
-                            timestamp: Date.now(),
-                            sessionId: "debug-session",
-                            runId: "run1",
-                            hypothesisId: "C",
-                        }),
-                    }
-                ).catch(() => {});
-                // #endregion
-
                 // Connect to Linera
-                await lineraAdapter.connect(dynamicWallet);
+                const provider = await lineraAdapter.connect(dynamicWallet);
 
-                // Set applications
-                await lineraAdapter.setApplications(
-                    PREDICTIVE_MANAGER_APP_ID,
-                    PREVIOUS_APP_IDS
-                );
+                // Set application
+                await lineraAdapter.setApplication(PREDICTIVE_MANAGER_APP_ID);
 
-                // Get chain ID from adapter
-                this.chainId = lineraAdapter.getChainId();
+                // Get chain ID from provider
+                const adapterChainId = provider.chainId;
+                this.chainId = adapterChainId;
 
                 this.isInitialized = true;
                 console.log("LineraService initialized successfully");
-
-                // #region agent log
-                fetch(
-                    "http://127.0.0.1:7242/ingest/e58d7062-0d47-477e-9656-193d36c038be",
-                    {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            location: "LineraService.ts:95",
-                            message: "Initialization completed",
-                            data: {
-                                isInitialized: this.isInitialized,
-                                chainId: this.chainId,
-                            },
-                            timestamp: Date.now(),
-                            sessionId: "debug-session",
-                            runId: "run1",
-                            hypothesisId: "C",
-                        }),
-                    }
-                ).catch(() => {});
-                // #endregion
             } catch (error) {
                 console.error("Failed to initialize LineraService:", error);
                 this.initializePromise = null; // Reset on error so it can retry
@@ -226,12 +120,7 @@ export class LineraService {
                 registerPlayer: boolean;
             }>(query);
 
-            if (result.errors) {
-                console.error("Register player errors:", result.errors);
-                return false;
-            }
-
-            return result.data?.registerPlayer || false;
+            return result.registerPlayer || false;
         } catch (error) {
             console.error("Failed to register player:", error);
             return false;
@@ -256,12 +145,7 @@ export class LineraService {
                 updateProfile: boolean;
             }>(query);
 
-            if (result.errors) {
-                console.error("Update profile errors:", result.errors);
-                return false;
-            }
-
-            return result.data?.updateProfile || false;
+            return result.updateProfile || false;
         } catch (error) {
             console.error("Failed to update profile:", error);
             return false;
@@ -284,12 +168,7 @@ export class LineraService {
                 claimDailyReward: boolean;
             }>(query);
 
-            if (result.errors) {
-                console.error("Claim daily reward errors:", result.errors);
-                return false;
-            }
-
-            return result.data?.claimDailyReward || false;
+            return result.claimDailyReward || false;
         } catch (error) {
             console.error("Failed to claim daily reward:", error);
             return false;
@@ -316,12 +195,7 @@ export class LineraService {
                 predictDailyOutcome: boolean;
             }>(query);
 
-            if (result.errors) {
-                console.error("Predict daily outcome errors:", result.errors);
-                return false;
-            }
-
-            return result.data?.predictDailyOutcome || false;
+            return result.predictDailyOutcome || false;
         } catch (error) {
             console.error("Failed to predict daily outcome:", error);
             return false;
@@ -346,12 +220,7 @@ export class LineraService {
                 predictWeeklyOutcome: boolean;
             }>(query);
 
-            if (result.errors) {
-                console.error("Predict weekly outcome errors:", result.errors);
-                return false;
-            }
-
-            return result.data?.predictWeeklyOutcome || false;
+            return result.predictWeeklyOutcome || false;
         } catch (error) {
             console.error("Failed to predict weekly outcome:", error);
             return false;
@@ -376,12 +245,7 @@ export class LineraService {
                 predictMonthlyOutcome: boolean;
             }>(query);
 
-            if (result.errors) {
-                console.error("Predict monthly outcome errors:", result.errors);
-                return false;
-            }
-
-            return result.data?.predictMonthlyOutcome || false;
+            return result.predictMonthlyOutcome || false;
         } catch (error) {
             console.error("Failed to predict monthly outcome:", error);
             return false;
@@ -407,12 +271,7 @@ export class LineraService {
                     query
                 );
 
-            if (result.errors) {
-                console.error("Get player errors:", result.errors);
-                return null;
-            }
-
-            return result.data?.player || null;
+            return result.player || null;
         } catch (error) {
             console.error("Failed to get player:", error);
             return null;
@@ -436,12 +295,7 @@ export class LineraService {
                     query
                 );
 
-            if (result.errors) {
-                console.error("Get player total points errors:", result.errors);
-                return 0;
-            }
-
-            const pointsString = result.data?.playerTotalPoints;
+            const pointsString = result.playerTotalPoints;
             if (!pointsString) return 0;
 
             return amountToPoints(pointsString);
@@ -468,12 +322,7 @@ export class LineraService {
                     query
                 );
 
-            if (result.errors) {
-                console.error("Get daily outcome errors:", result.errors);
-                return null;
-            }
-
-            return result.data?.getDailyOutcome ?? null;
+            return result.getDailyOutcome ?? null;
         } catch (error) {
             console.error("Failed to get daily outcome:", error);
             return null;
@@ -497,12 +346,7 @@ export class LineraService {
                     query
                 );
 
-            if (result.errors) {
-                console.error("Get weekly outcome errors:", result.errors);
-                return null;
-            }
-
-            return result.data?.getWeeklyOutcome ?? null;
+            return result.getWeeklyOutcome ?? null;
         } catch (error) {
             console.error("Failed to get weekly outcome:", error);
             return null;
@@ -526,12 +370,7 @@ export class LineraService {
                     query
                 );
 
-            if (result.errors) {
-                console.error("Get monthly outcome errors:", result.errors);
-                return null;
-            }
-
-            return result.data?.getMonthlyOutcome ?? null;
+            return result.getMonthlyOutcome ?? null;
         } catch (error) {
             console.error("Failed to get monthly outcome:", error);
             return null;
@@ -557,12 +396,7 @@ export class LineraService {
                     query
                 );
 
-            if (result.errors) {
-                console.error("Get global leaderboard errors:", result.errors);
-                return null;
-            }
-
-            return result.data?.globalLeaderboard || null;
+            return result.globalLeaderboard || null;
         } catch (error) {
             console.error("Failed to get global leaderboard:", error);
             return null;
@@ -584,12 +418,7 @@ export class LineraService {
             const result =
                 await lineraAdapter.queryApplication<AllGuildsResponse>(query);
 
-            if (result.errors) {
-                console.error("Get all guilds errors:", result.errors);
-                return [];
-            }
-
-            return result.data?.allGuilds || [];
+            return result.allGuilds || [];
         } catch (error) {
             console.error("Failed to get all guilds:", error);
             return [];
@@ -615,12 +444,7 @@ export class LineraService {
                     query
                 );
 
-            if (result.errors) {
-                console.error("Get guild members errors:", result.errors);
-                return [];
-            }
-
-            return result.data?.guildMembers || [];
+            return result.guildMembers || [];
         } catch (error) {
             console.error("Failed to get guild members:", error);
             return [];
@@ -644,12 +468,7 @@ export class LineraService {
                     query
                 );
 
-            if (result.errors) {
-                console.error("Get guild total points errors:", result.errors);
-                return 0;
-            }
-
-            const pointsString = result.data?.guildTotalPoints;
+            const pointsString = result.guildTotalPoints;
             if (!pointsString) return 0;
 
             return amountToPoints(pointsString);
@@ -661,9 +480,11 @@ export class LineraService {
 
     /**
      * Subscribe to notifications
+     * Note: Block notifications are not yet implemented in LineraAdapter
      */
-    onNotification(callback: (data: any) => void): void {
-        lineraAdapter.onNewBlockNotification(callback);
+    onNotification(_callback: (data: any) => void): void {
+        // TODO: Implement block notifications when LineraAdapter supports it
+        console.warn("Block notifications not yet implemented");
     }
 
     /**

@@ -143,3 +143,4 @@ export const PREDICT_MONTHLY_OUTCOME_MUTATION = `
     }
 `;
 
+
