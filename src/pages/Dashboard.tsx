@@ -12,14 +12,52 @@ import { Link } from "react-router-dom";
 import logo from "@/assets/roxy-logo.png";
 import { useState, useEffect, useRef } from "react";
 import { PricePrediction } from "@/components/PricePrediction";
+import { useAuth } from "@/lib/linera/hooks/useAuth";
+import { usePlayer } from "@/lib/linera/hooks/useLineraQueries";
+import { useQueryClient } from "@tanstack/react-query";
+import { amountToPoints } from "@/lib/linera/utils/amount";
 
 export function Dashboard() {
+    const { walletAddress, isConnectedToLinera } = useAuth();
+    const queryClient = useQueryClient();
+
+    // Fetch player data from Linera
+    const { data: lineraPlayer, isLoading: isLoadingPlayer } = usePlayer(
+        walletAddress || null
+    );
+
     const {
-        player,
+        player: storePlayer,
         currentMarketPrice,
         claimDailyReward,
         achievements,
+        isLoading,
     } = useGameStore();
+
+    // Use Linera player data if available, otherwise fall back to store (for mock mode)
+    const player = lineraPlayer
+        ? {
+              id: lineraPlayer.id,
+              displayName: lineraPlayer.displayName || "Player",
+              tokenBalance: amountToPoints(lineraPlayer.tokenBalance),
+              totalEarned: amountToPoints(lineraPlayer.totalEarned),
+              totalSpent: amountToPoints(lineraPlayer.totalSpent),
+              level: lineraPlayer.level,
+              experiencePoints: lineraPlayer.experiencePoints,
+              reputation: lineraPlayer.reputation,
+              marketsParticipated: lineraPlayer.marketsParticipated,
+              marketsWon: lineraPlayer.marketsWon,
+              totalProfit: amountToPoints(lineraPlayer.totalProfit),
+              winStreak: lineraPlayer.winStreak,
+              bestWinStreak: lineraPlayer.bestWinStreak,
+              guildId: lineraPlayer.guildId?.toString() || null,
+              achievementsEarned: [], // TODO: Map from contract if available
+              activeMarkets: [], // TODO: Map from contract if available
+              lastLogin: lineraPlayer.lastLogin
+                  ? new Date(lineraPlayer.lastLogin).getTime()
+                  : undefined,
+          }
+        : storePlayer;
 
     const [priceChange, setPriceChange] = useState<number>(0);
     const [priceChangePercent, setPriceChangePercent] = useState<number>(0);
@@ -33,7 +71,9 @@ export function Dashboard() {
     const levelXPThreshold = 1000 * Math.pow(4, player.level - 1);
     const xpProgress =
         player.level > 1
-            ? ((player.experiencePoints % levelXPThreshold) / levelXPThreshold) * 100
+            ? ((player.experiencePoints % levelXPThreshold) /
+                  levelXPThreshold) *
+              100
             : (player.experiencePoints / 1000) * 100;
 
     // Get recent achievements
@@ -42,11 +82,28 @@ export function Dashboard() {
         .map((id) => achievements.find((a) => a.id === id))
         .filter((a): a is NonNullable<typeof a> => a !== undefined);
 
+    // Handle daily reward claim with query invalidation
+    const handleClaimDailyReward = async () => {
+        if (!walletAddress) return;
+        const success = await claimDailyReward(walletAddress);
+        if (success) {
+            // Invalidate player queries to refetch updated data
+            queryClient.invalidateQueries({
+                queryKey: ["linera", "player", walletAddress],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["linera", "player", walletAddress, "totalPoints"],
+            });
+        }
+    };
+
     // Check if daily reward can be claimed (24-hour cooldown)
+    // Note: This is a simplified check - the contract handles the actual cooldown
     const oneDayMs = 24 * 60 * 60 * 1000;
     const lastLogin = player.lastLogin || 0;
     const timeSinceLastLogin = Date.now() - lastLogin;
-    const canClaimDailyReward = timeSinceLastLogin >= oneDayMs || lastLogin === 0;
+    const canClaimDailyReward =
+        timeSinceLastLogin >= oneDayMs || lastLogin === 0;
 
     // Track price changes for live updates
     useEffect(() => {
@@ -68,6 +125,17 @@ export function Dashboard() {
         return () => clearTimeout(timer);
     }, [currentMarketPrice.price]);
 
+    // Show loading state while fetching player data
+    if (isConnectedToLinera && isLoadingPlayer) {
+        return (
+            <div className="min-h-screen bg-black text-white p-4 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <p className="font-mono-brutal">Loading player data...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-black text-white p-4 pb-20 lg:pb-4">
@@ -84,7 +152,8 @@ export function Dashboard() {
                             {player.displayName}
                         </h1>
                         <p className="text-sm font-mono-brutal text-text-body">
-                            LEVEL {player.level} • {player.experiencePoints.toLocaleString()} XP
+                            LEVEL {player.level} •{" "}
+                            {player.experiencePoints.toLocaleString()} XP
                         </p>
                     </div>
                 </div>
@@ -119,13 +188,21 @@ export function Dashboard() {
 
                         <div className="flex items-center justify-center lg:justify-start gap-2">
                             {totalProfit >= 0 ? (
-                                <TrendingUp className="text-success" size={20} />
+                                <TrendingUp
+                                    className="text-success"
+                                    size={20}
+                                />
                             ) : (
-                                <TrendingDown className="text-danger" size={20} />
+                                <TrendingDown
+                                    className="text-danger"
+                                    size={20}
+                                />
                             )}
                             <span
                                 className={`text-lg font-brutal ${
-                                    totalProfit >= 0 ? "text-success" : "text-danger"
+                                    totalProfit >= 0
+                                        ? "text-success"
+                                        : "text-danger"
                                 }`}
                             >
                                 {totalProfit >= 0 ? "+" : ""}
@@ -220,7 +297,9 @@ export function Dashboard() {
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.8 }}
                                         className={`flex items-center gap-1 ${
-                                            priceChange > 0 ? "text-success" : "text-danger"
+                                            priceChange > 0
+                                                ? "text-success"
+                                                : "text-danger"
                                         }`}
                                     >
                                         {priceChange > 0 ? (
@@ -237,7 +316,10 @@ export function Dashboard() {
                             </AnimatePresence>
                         </div>
                         <p className="text-sm font-mono-brutal text-white mt-2">
-                            Last updated: {new Date(currentMarketPrice.timestamp).toLocaleTimeString()}
+                            Last updated:{" "}
+                            {new Date(
+                                currentMarketPrice.timestamp
+                            ).toLocaleTimeString()}
                         </p>
                     </div>
                 </motion.div>
@@ -261,8 +343,8 @@ export function Dashboard() {
                             Claim 10 points every 24 hours
                         </p>
                         <button
-                            onClick={claimDailyReward}
-                            disabled={!canClaimDailyReward}
+                            onClick={handleClaimDailyReward}
+                            disabled={!canClaimDailyReward || isLoading}
                             className={`btn-brutal ${
                                 !canClaimDailyReward
                                     ? "opacity-50 cursor-not-allowed"
@@ -328,8 +410,8 @@ export function Dashboard() {
                         <div className="text-center py-8 text-white">
                             <Star size={32} className="mx-auto mb-2" />
                             <p className="font-mono-brutal text-sm">
-                                NO ACHIEVEMENTS YET. START PLAYING TO EARN YOUR FIRST
-                                ACHIEVEMENT!
+                                NO ACHIEVEMENTS YET. START PLAYING TO EARN YOUR
+                                FIRST ACHIEVEMENT!
                             </p>
                         </div>
                     )}
@@ -378,7 +460,6 @@ export function Dashboard() {
                     </Link>
                 </motion.div>
             </div>
-
         </div>
     );
 }

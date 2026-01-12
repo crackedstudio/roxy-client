@@ -57,3 +57,6 @@ To verify your integration is working correctly:
 
 If these core functions work, the CORS/network errors are just background sync issues and can be safely ignored.
 
+
+
+

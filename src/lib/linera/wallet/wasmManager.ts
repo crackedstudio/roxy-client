@@ -1,3 +1,4 @@
+import { initialize } from "@linera/client";
 import * as linera from "@linera/client";
 
 export class WasmManager {
@@ -9,7 +10,8 @@ export class WasmManager {
       return;
     }
 
-    await linera.default();
+    // Use initialize() from @linera/client instead of default export
+    await initialize();
     this.wasm = linera;
     this.initialized = true;
   }
@@ -25,4 +27,6 @@ export class WasmManager {
     return this.initialized;
   }
 }
+
+
 
